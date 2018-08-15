@@ -59,11 +59,14 @@
       </div><!-- /.container-fluid -->
     </nav>
     <router-view></router-view>
+    <all-passages></all-passages>
   </div>
 </template>
 
 <script>
+import allPassages from '@/components/allPassages'
 export default {
+  components: { allPassages },
   data () {
     return {
       username: '',

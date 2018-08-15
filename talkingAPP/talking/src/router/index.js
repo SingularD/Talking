@@ -38,7 +38,7 @@ export default new Router({
       component: user,
       children: [
         {
-          path: 'content/:title',
+          path: 'content/:title/time/:time',
           name: 'content',
           component: content
         }

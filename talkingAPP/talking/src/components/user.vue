@@ -1,7 +1,6 @@
 <template>
   <div id="passageList">
-    <h2>文章列表</h2>
-    <h2>{{params}}</h2>
+    <h2 v-if="showBodyTitle">文章列表</h2>
     <router-view></router-view>
     <ul v-if="showList">
       <li v-for="(post, index) in posts" :key="index">
@@ -26,7 +25,8 @@ export default {
       posts: [],
       params: this.$route.params.id,
       titleParams: this.$route.params.title,
-      showList: true
+      showList: true,
+      showBodyTitle: true
     }
   },
   mounted () {
@@ -35,6 +35,7 @@ export default {
     }
     if (this.titleParams) {
       this.showList = false
+      this.showBodyTitle = false
     }
     let self = this
     this.axios.post('/user', data).then(function (response) {
@@ -52,7 +53,7 @@ export default {
   methods: {
     showPassage (data) {
       window.location.href = '/user/' + this.$route.params.id +
-        '/content/' + data
+        '/content/' + data.title + '/time/' + data.dateTime
     },
     deleteIt (index) {
       let self = this

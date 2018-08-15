@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('./../models/database')
 const crypto = require('crypto')
+const changeDate = require('./../models/changeFormDate')
 //获取当前用户
 router.get('/', function (req,res) {
     let current = '';
@@ -15,7 +16,6 @@ router.get('/', function (req,res) {
                 current = result[x].user
             }
         }
-        console.log(current)
         res.send(current)
     })
 })
@@ -57,7 +57,6 @@ router.post('/register',function (req, res) {
             return
         }
         registerData.message = '注册成功！';
-        console.log(fields)
         res.send(registerData)
     })
 })
@@ -72,7 +71,6 @@ router.post('/login', function (req, res) {
     const sql = 'select * from users';
     mysql.query(sql, function (err,result) {
         if (err) {
-            console.log('----------')
             console.log(err);
             return;
         }
@@ -84,7 +82,6 @@ router.post('/login', function (req, res) {
                 mysql.query('truncate `current_user`');
                 const sqlCurrent = 'insert into `current_user` (user) values (?)';
                 let currParams = result[x].username;
-                console.log(currParams);
                 mysql.query(sqlCurrent, currParams, function (err) {
                     if (err) {
                         console.log(err);
@@ -137,7 +134,6 @@ router.post('/user', function (req,res) {
             data.content.push(result[x].passage_content)
             data.dateTime.push(result[x].submit_time)
         }
-        console.log(data)
         res.send(data)
     })
 })
@@ -197,5 +193,74 @@ router.post('/delete', function (req,res) {
     })
 })
 
+//查询文章
+router.post('/getPassage',function (req,res) {
+    let data = {
+        title: req.body.title,
+        user: req.body.user,
+        time: req.body.time,
+        content: '',
+        author: '',
+    }
+    const sql1 = 'update passage set pv = pv + 1 where `submit_time` = ?'
+    let sql1Params = data.time;
+    mysql.query(sql1,sql1Params, function (err) {
+        if (err) {
+            console.log(err);
+        }
+    })
+    const sql = 'select * from passage where `passage_title` = ? and ' +
+        'username = ? and `submit_time` = ?'
+    let sqlParams = [data.title, data.user, data.time]
+    mysql.query(sql, sqlParams, function (err,result) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        data.content = result[0].passage_content;
+        data.author = result[0].username;
+        res.send(data)
+    })
+})
+
+
+//获取最新发布的文章和最热文章
+router.get('/getLatestPassages',function (req,res) {
+    let data = {
+        latestTitles: [],
+        latestPv: []
+    }
+    const sql = 'select * from passage order by submit_time desc'
+    mysql.query(sql, function (err, result) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        for (let i = 0; i < result.length; i++){
+            data.latestTitles.push(result[i].passage_title)
+            data.latestPv.push(result[i].pv)
+        }
+       res.send(data)
+    })
+})
+
+router.get('/getHottestPassage', function (req,res) {
+    let data = {
+        hottestTitles: [],
+        hottestPv: []
+    }
+    const sql1 = 'select * from passage order by pv desc'
+    mysql.query(sql1, function (err,result) {
+        if (err) {
+            console.log(err)
+            return
+        }
+        for (let i = 0; i <result.length; i++) {
+            data.hottestTitles.push(result[i].passage_title)
+            data.hottestPv.push(result[i].pv)
+        }
+    })
+    res.send(data)
+})
 
 module.exports = router;

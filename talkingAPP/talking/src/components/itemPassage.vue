@@ -30,7 +30,11 @@ export default {
   props: ['title', 'intro', 'dateTime'],
   methods: {
     look () {
-      this.$emit('showContent', this.title)
+      let data = {
+        title: this.title,
+        dateTime: this.dateTime
+      }
+      this.$emit('showContent', data)
     },
     deletePassage () {
       this.$emit('deletePassage')
