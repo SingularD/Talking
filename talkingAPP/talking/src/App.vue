@@ -17,15 +17,21 @@
             <li><a href="#">Link <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Link</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">个人 <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">One more separated link</a></li>
+                <!--条件渲染个人选项-->
+                <li v-if="isShowPersonLogin"><a href="/login">请先登录</a></li>
+                <li v-if="logined">
+                  <router-link :to="{ name: 'user', params: { id: username }}">
+                    文章
+                  </router-link>
+                </li>
+                <li v-if="logined" role="separator" class="divider"></li>
+                <li v-if="logined">
+                  <router-link :to="{ name: 'write', params: { id: username }}">
+                    发表
+                  </router-link>
+                </li>
               </ul>
             </li>
           </ul>
@@ -52,7 +58,6 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-    <homeContent v-if="isShowContent"></homeContent>
     <router-view></router-view>
   </div>
 </template>
@@ -62,15 +67,19 @@ export default {
   data () {
     return {
       username: '',
-      userFlag: false
+      userFlag: false,
+      isShowPersonLogin: true,
+      logined: false
     }
   },
-  mounted() {
+  mounted () {
     let self = this
     this.axios.get('/').then(function (response) {
       if (response.data !== '') {
         self.userFlag = true
         self.username = response.data
+        self.isShowPersonLogin = false
+        self.logined = true
       }
     })
   },
@@ -79,7 +88,7 @@ export default {
       let data = {
         logoutMessage: 'logout'
       }
-      this.axios.post('/logout',data).then(function (response) {
+      this.axios.post('/logout', data).then(function (response) {
         if (response.data.status === 'ok') {
           window.location.href = '/'
         }

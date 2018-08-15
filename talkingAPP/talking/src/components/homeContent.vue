@@ -1,5 +1,6 @@
 <template>
   <div class="homeContent">
+    <!--轮播图-->
     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
       <ol class="carousel-indicators">
@@ -10,17 +11,17 @@
 
       <!-- Wrapper for slides -->
       <div class="carousel-inner" role="listbox">
-        <div class="item active">
+        <div class="item active img-responsive">
           <img src="../assets/img/backgroud1.jpg">
           <div class="carousel-caption">
           </div>
         </div>
-        <div class="item">
+        <div class="item img-responsive">
           <img src="../assets/img/backgroud2.jpg">
           <div class="carousel-caption">
           </div>
         </div>
-        <div class="item">
+        <div class="item img-responsive">
           <img src="../assets/img/backgroud1.jpg">
           <div class="carousel-caption">
           </div>
@@ -37,14 +38,16 @@
         <span class="sr-only">Next</span>
       </a>
     </div>
+    <!--文章展示-->
+    <div class="passage"></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "homeContent",
+  name: 'homeContent',
   mounted () {
-    
+
   }
 }
 </script>
@@ -54,10 +57,10 @@ export default {
 
 }
 .carousel-inner{
+  height: 300px;
   width: 90%;
   margin-left: 5%;
 }
 img{
-
 }
 </style>

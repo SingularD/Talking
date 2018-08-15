@@ -33,7 +33,7 @@ export default {
         .then(function (response) {
           if (response.data.message === '登录成功！') {
             window.location.href = '/'
-          }else alert(response.data.message)
+          } else alert(response.data.message)
         })
         .catch(function (err) {
           console.log(err)
