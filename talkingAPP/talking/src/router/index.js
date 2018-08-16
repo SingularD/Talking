@@ -6,6 +6,8 @@ import homeContent from '@/components/homeContent'
 import write from '@/components/write'
 import user from '@/components/user'
 import content from '@/components/passageContent'
+import passagesList from '@/components/passagesList'
+import tagPassages from '@/components/tagPassages'
 
 Vue.use(Router)
 
@@ -43,6 +45,17 @@ export default new Router({
           component: content
         }
       ]
+    },
+    {
+      path: '/passagesList',
+      name: 'passagesList',
+      component: passagesList
+    },
+    {
+      path: '/tagPassages/:tag',
+      name: 'tagPassages',
+      component: tagPassages
     }
+
   ]
 })

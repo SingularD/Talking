@@ -119,8 +119,10 @@ router.post('/user', function (req,res) {
         username: req.body.username,
         title: [],
         content: [],
-        dateTime: []
-
+        dateTime: [],
+        tag1: [],
+        tag2: [],
+        tag3: []
     }
     const sql1 = 'select * from passage where username = ?'
     const sql1Params = data.username
@@ -133,6 +135,9 @@ router.post('/user', function (req,res) {
             data.title.push(result[x].passage_title)
             data.content.push(result[x].passage_content)
             data.dateTime.push(result[x].submit_time)
+            data.tag1.push(result[x].tag1)
+            data.tag2.push(result[x].tag2)
+            data.tag3.push(result[x].tag3)
         }
         res.send(data)
     })
@@ -146,7 +151,10 @@ router.post('/write', function (req,res) {
         title: req.body.title,
         content: req.body.content,
         status: '提交失败',
-        datetime: req.body.datetime
+        datetime: req.body.datetime,
+        tag1: req.body.tags[0],
+        tag2: req.body.tags[1],
+        tag3: req.body.tags[2]
     }
     console.log(data)
     const sql1 = 'select * from `current_user`'
@@ -158,9 +166,9 @@ router.post('/write', function (req,res) {
         if (result[0].user){
             data.user = result[0].user
             const sql2 = 'insert into passage ' +
-                '(id,username,`passage_title`,`passage_content`,`submit_time`) ' +
-                'values (0,?,?,?,?)'
-            let sql2Params = [data.user,data.title,data.content,data.datetime]
+                '(id,username,`passage_title`,`passage_content`,`submit_time`,pv,tag1,tag2,tag3) ' +
+                'values (0,?,?,?,?,0,?,?,?)'
+            let sql2Params = [data.user,data.title,data.content,data.datetime,data.tag1,data.tag2,data.tag3]
             mysql.query(sql2,sql2Params,function (err) {
                 if (err) {
                     console.log(err);
@@ -197,7 +205,6 @@ router.post('/delete', function (req,res) {
 router.post('/getPassage',function (req,res) {
     let data = {
         title: req.body.title,
-        user: req.body.user,
         time: req.body.time,
         content: '',
         author: '',
@@ -208,18 +215,17 @@ router.post('/getPassage',function (req,res) {
         if (err) {
             console.log(err);
         }
-    })
-    const sql = 'select * from passage where `passage_title` = ? and ' +
-        'username = ? and `submit_time` = ?'
-    let sqlParams = [data.title, data.user, data.time]
-    mysql.query(sql, sqlParams, function (err,result) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        data.content = result[0].passage_content;
-        data.author = result[0].username;
-        res.send(data)
+        const sql = 'select * from passage where `passage_title` = ? and `submit_time` = ?'
+        let sqlParams = [data.title, data.time]
+        mysql.query(sql, sqlParams, function (err,result) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            data.content = result[0].passage_content;
+            data.author = result[0].username;
+            res.send(data)
+        })
     })
 })
 
@@ -228,7 +234,9 @@ router.post('/getPassage',function (req,res) {
 router.get('/getLatestPassages',function (req,res) {
     let data = {
         latestTitles: [],
-        latestPv: []
+        latestPv: [],
+        latestTime:[],
+        latestUser: []
     }
     const sql = 'select * from passage order by submit_time desc'
     mysql.query(sql, function (err, result) {
@@ -239,15 +247,19 @@ router.get('/getLatestPassages',function (req,res) {
         for (let i = 0; i < result.length; i++){
             data.latestTitles.push(result[i].passage_title)
             data.latestPv.push(result[i].pv)
+            data.latestTime.push(result[i].submit_time)
+            data.latestUser.push(result[i].username)
         }
        res.send(data)
     })
 })
 
-router.get('/getHottestPassage', function (req,res) {
+router.get('/getHottestPassages', function (req,res) {
     let data = {
         hottestTitles: [],
-        hottestPv: []
+        hottestPv: [],
+        hottestUser: [],
+        hottestTime: []
     }
     const sql1 = 'select * from passage order by pv desc'
     mysql.query(sql1, function (err,result) {
@@ -258,9 +270,43 @@ router.get('/getHottestPassage', function (req,res) {
         for (let i = 0; i <result.length; i++) {
             data.hottestTitles.push(result[i].passage_title)
             data.hottestPv.push(result[i].pv)
+            data.hottestTime.push(result[i].submit_time)
+            data.hottestUser.push(result[i].username)
         }
+        res.send(data)
     })
-    res.send(data)
+})
+//获取所有文章
+router.get('/passagesList', function (req,res) {
+    let data = {}
+    const sql = 'select * from passage'
+    mysql.query(sql, function (err,result) {
+        if (err) {
+            console.log(err);
+            return
+        }
+        data = result
+        res.send(data)
+    })
+})
+
+
+//获取所含标签的文章
+router.post('/tagPassages', function (req, res) {
+    let data = {
+        tag: req.body.tag,
+
+    }
+    const sql = ' select * from passage where tag1 = ? or tag2 = ? or tag3 = ?'
+    let sqlParams = [data.tag, data.tag, data.tag]
+    mysql.query(sql, sqlParams, function (err, result) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log(result)
+        res.send(result)
+    })
 })
 
 module.exports = router;

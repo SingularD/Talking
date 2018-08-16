@@ -7,6 +7,11 @@
         <item-passage :title="post.title"
                       :intro="post.intro"
                       :dateTime="post.dateTime"
+                      :username="params"
+                      :authority="authority"
+                      :tag1="post.tag1"
+                      :tag2="post.tag2"
+                      :tag3="post.tag3"
                       @showContent="showPassage"
                       @deletePassage="deleteIt(index)">
         </item-passage>
@@ -26,7 +31,8 @@ export default {
       params: this.$route.params.id,
       titleParams: this.$route.params.title,
       showList: true,
-      showBodyTitle: true
+      showBodyTitle: true,
+      authority: ''
     }
   },
   mounted () {
@@ -37,6 +43,11 @@ export default {
       this.showList = false
       this.showBodyTitle = false
     }
+    this.axios.get('/').then(function (response) {
+      self.authority = response.data
+      console.log(response.data)
+      console.log('authority: ' + self.authority)
+    })
     let self = this
     this.axios.post('/user', data).then(function (response) {
       let length = response.data.title.length
@@ -45,9 +56,11 @@ export default {
         self.posts.push({
           title: response.data.title[i],
           intro: response.data.content[i],
-          dateTime: nowTime})
+          dateTime: nowTime,
+          tag1: response.data.tag1[i],
+          tag2: response.data.tag2[i],
+          tag3: response.data.tag3[i]})
       }
-      console.log(response)
     })
   },
   methods: {
@@ -61,7 +74,6 @@ export default {
         title: this.posts[index].title
       }
       this.axios.post('/delete', data).then(function (response) {
-        console.log(response)
         if (response.data === 'ok') {
           self.posts.splice(index, 1)
         } else alert(response.data)

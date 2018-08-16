@@ -5,7 +5,7 @@
     <p>发表时间：{{ time }}  ||  作者：{{ author }}</p>
     <br>
 
-    <p class="content">{{ content }}</p>
+    <p class="content text-center">{{ content }}</p>
   </div>
 </template>
 
@@ -14,7 +14,6 @@ export default {
   name: 'passageContent',
   data () {
     return {
-      user: this.$route.params.id,
       title: this.$route.params.title,
       time: this.$route.params.time,
       author: '',

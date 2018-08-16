@@ -14,7 +14,7 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><a href="#">Link <span class="sr-only">(current)</span></a></li>
+            <li><a href="/passagesList">文章<span class="sr-only">(current)</span></a></li>
             <li><a href="#">Link</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">个人 <span class="caret"></span></a>
@@ -59,7 +59,7 @@
       </div><!-- /.container-fluid -->
     </nav>
     <router-view></router-view>
-    <all-passages></all-passages>
+    <all-passages v-if="isShowAllPassages" @clickLatest="latestToContent" @clickHottest="hottestToContent"></all-passages>
   </div>
 </template>
 
@@ -72,7 +72,8 @@ export default {
       username: '',
       userFlag: false,
       isShowPersonLogin: true,
-      logined: false
+      logined: false,
+      isShowAllPassages: true
     }
   },
   mounted () {
@@ -85,6 +86,9 @@ export default {
         self.logined = true
       }
     })
+    if (this.$route.path !== '/') {
+      this.isShowAllPassages = false
+    }
   },
   methods: {
     logout () {
@@ -96,6 +100,14 @@ export default {
           window.location.href = '/'
         }
       })
+    },
+    latestToContent (data) {
+      window.location.href = '/user/' + data.latestUser + '/content/' +
+        data.latestTitle + '/time/' + data.latestTime
+    },
+    hottestToContent (data) {
+      window.location.href = '/user/' + data.hottestUser + '/content/' +
+        data.hottestTitle + '/time/' + data.hottestTime
     }
   }
 }
