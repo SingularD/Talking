@@ -208,6 +208,9 @@ router.post('/getPassage',function (req,res) {
         time: req.body.time,
         content: '',
         author: '',
+        tag1: '',
+        tag2: '',
+        tag3: ''
     }
     const sql1 = 'update passage set pv = pv + 1 where `submit_time` = ?'
     let sql1Params = data.time;
@@ -224,6 +227,9 @@ router.post('/getPassage',function (req,res) {
             }
             data.content = result[0].passage_content;
             data.author = result[0].username;
+            data.tag1 = result[0].tag1;
+            data.tag2 = result[0].tag2;
+            data.tag3 = result[0].tag3;
             res.send(data)
         })
     })
@@ -236,7 +242,10 @@ router.get('/getLatestPassages',function (req,res) {
         latestTitles: [],
         latestPv: [],
         latestTime:[],
-        latestUser: []
+        latestUser: [],
+        latestTag1: [],
+        latestTag2: [],
+        latestTag3: []
     }
     const sql = 'select * from passage order by submit_time desc'
     mysql.query(sql, function (err, result) {
@@ -249,6 +258,9 @@ router.get('/getLatestPassages',function (req,res) {
             data.latestPv.push(result[i].pv)
             data.latestTime.push(result[i].submit_time)
             data.latestUser.push(result[i].username)
+            data.latestTag1.push(result[i].tag1)
+            data.latestTag2.push(result[i].tag2)
+            data.latestTag3.push(result[i].tag3)
         }
        res.send(data)
     })
@@ -259,7 +271,10 @@ router.get('/getHottestPassages', function (req,res) {
         hottestTitles: [],
         hottestPv: [],
         hottestUser: [],
-        hottestTime: []
+        hottestTime: [],
+        hottestTag1: [],
+        hottestTag2: [],
+        hottestTag3: []
     }
     const sql1 = 'select * from passage order by pv desc'
     mysql.query(sql1, function (err,result) {
@@ -272,6 +287,9 @@ router.get('/getHottestPassages', function (req,res) {
             data.hottestPv.push(result[i].pv)
             data.hottestTime.push(result[i].submit_time)
             data.hottestUser.push(result[i].username)
+            data.hottestTag1.push(result[i].tag1)
+            data.hottestTag2.push(result[i].tag2)
+            data.hottestTag3.push(result[i].tag3)
         }
         res.send(data)
     })
@@ -308,5 +326,42 @@ router.post('/tagPassages', function (req, res) {
         res.send(result)
     })
 })
+
+//修改文章
+
+router.post('/edit',function (req, res) {
+    let data = {
+        status: '提交失败！',
+        title: req.body.title,
+        content: req.body.content,
+        tag1: req.body.tags[0],
+        tag2: req.body.tags[1],
+        tag3: req.body.tags[2],
+        time: req.body.dateTime
+    }
+    console.log(data)
+    const sql = 'update passage set `passage_content` = ?,' +
+        ' tag1  = ? , tag2 = ? , tag3 = ?' +
+        ' where `submit_time` = ? and `passage_title` = ?';
+    let sqlParams = [data.content, data.tag1, data.tag2,
+        data.tag3, data.time, data.title]
+    mysql.query(sql, sqlParams, function (err) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        data.status = '提交成功！'
+        res.send(data.status)
+    })
+})
+
+//查询
+router.post('/search', function (req,res) {
+    let data = {
+        field: req.body.field
+    }
+
+})
+
 
 module.exports = router;

@@ -8,6 +8,8 @@ import user from '@/components/user'
 import content from '@/components/passageContent'
 import passagesList from '@/components/passagesList'
 import tagPassages from '@/components/tagPassages'
+import passageEdit from '@/components/passageEdit'
+import search from '@/components/search'
 
 Vue.use(Router)
 
@@ -55,7 +57,16 @@ export default new Router({
       path: '/tagPassages/:tag',
       name: 'tagPassages',
       component: tagPassages
+    },
+    {
+      path: '/edit/:title/time/:time',
+      name: 'passageEdit',
+      component: passageEdit
+    },
+    {
+      path: '/search/:field',
+      name: 'search',
+      component: search
     }
-
   ]
 })

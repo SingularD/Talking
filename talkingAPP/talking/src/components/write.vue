@@ -1,8 +1,7 @@
 <template>
-  <div>
+  <div id="write">
     <input type="text" class="form-control title"
            placeholder="Title" v-model="textTitle">
-
     <form class="form-inline">
       <div class="form-group">
         <label class="sr-only" for="tagOne">tag: </label>
@@ -21,7 +20,8 @@
       </div>
     </form>
 
-    <textarea class="form-control content" rows="3"
+    <textarea class="form-control content" rows="12"
+              data-provide="markdown"
               placeholder="Input your content"
               v-model="content">
     </textarea>
@@ -31,10 +31,13 @@
 </template>
 
 <script>
+import VueMarkdown from 'vue-markdown'
 export default {
   name: 'write',
+  components: { VueMarkdown },
   data () {
     return {
+      source: this.getFormTime(),
       textTitle: '',
       content: '',
       time: '',
@@ -53,6 +56,7 @@ export default {
       this.axios.post('/write', passage).then(function (response) {
         if (response.data.status === '提交成功！') {
           alert('提交成功')
+          window.location.href = '/passagesList'
         }
       })
     }
@@ -61,10 +65,14 @@ export default {
 </script>
 
 <style scoped>
-.form-control{
-  width: 70%;
-  margin-left: 15%;
-}
+  #write{
+    width: 70%;
+    margin-left: 15%;
+  }
+/*.form-control{*/
+  /*width: 70%;*/
+  /*margin-left: 15%;*/
+/*}*/
   .title{
     margin-top: 70px;
   }
@@ -77,6 +85,5 @@ export default {
   .form-inline{
     margin-top: 50px;
     width: 70%;
-    margin-left: 13.1%;
   }
 </style>

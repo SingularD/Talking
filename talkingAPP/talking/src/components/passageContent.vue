@@ -4,14 +4,15 @@
     <br>
     <p>发表时间：{{ time }}  ||  作者：{{ author }}</p>
     <br>
-
-    <p class="content text-center">{{ content }}</p>
+    <vue-markdown :source="content" class="text-center" style="font-size: 20px"></vue-markdown>
   </div>
 </template>
 
 <script>
+import VueMarkdown from 'vue-markdown'
 export default {
   name: 'passageContent',
+  components: { VueMarkdown },
   data () {
     return {
       title: this.$route.params.title,
@@ -36,7 +37,5 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  font-size: 18px;
-}
+
 </style>

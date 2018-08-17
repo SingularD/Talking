@@ -37,16 +37,16 @@
           </ul>
           <form class="navbar-form navbar-right">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Search">
+              <input type="text" class="form-control" placeholder="Search" v-model="search">
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-default" @click="search">Submit</button>
           </form>
           <ul class="nav navbar-nav navbar-right">
             <!--显示是否登录-->
             <li v-if="userFlag"><a href="#">你好:{{username}}</a></li>
             <li v-else><router-link to="/login">未登录</router-link></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">登录/注册 <span class="caret"></span></a>
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">登录/注册 <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="/login">登录</a></li>
                 <li @click="logout"><a>登出</a></li>
@@ -59,7 +59,7 @@
       </div><!-- /.container-fluid -->
     </nav>
     <router-view></router-view>
-    <all-passages v-if="isShowAllPassages" @clickLatest="latestToContent" @clickHottest="hottestToContent"></all-passages>
+    <all-passages v-if="$route.path === '/'" @clickLatest="latestToContent" @clickHottest="hottestToContent"></all-passages>
   </div>
 </template>
 
@@ -73,7 +73,8 @@ export default {
       userFlag: false,
       isShowPersonLogin: true,
       logined: false,
-      isShowAllPassages: true
+      isShowAllPassages: true,
+      search: ''
     }
   },
   mounted () {
@@ -86,9 +87,6 @@ export default {
         self.logined = true
       }
     })
-    if (this.$route.path !== '/') {
-      this.isShowAllPassages = false
-    }
   },
   methods: {
     logout () {
@@ -108,6 +106,18 @@ export default {
     hottestToContent (data) {
       window.location.href = '/user/' + data.hottestUser + '/content/' +
         data.hottestTitle + '/time/' + data.hottestTime
+    },
+    search () {
+      let data = {
+        search: this.search
+      }
+      if (data.search === '') {
+        alert('请输入查询内容！')
+      } else {
+        this.axios.post('/search',data).then(function (response) {
+
+        })
+      }
     }
   }
 }

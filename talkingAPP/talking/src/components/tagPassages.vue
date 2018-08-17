@@ -36,6 +36,9 @@ export default {
   },
   mounted () {
     let self = this
+    this.axios.get('/').then(function (response) {
+      self.authority = response.data
+    })
     let data = {
       tag: this.$route.params.tag
     }

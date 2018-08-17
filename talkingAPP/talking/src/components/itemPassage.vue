@@ -70,7 +70,7 @@ export default {
       this.$emit('deletePassage')
     },
     handleEdit () {
-      this.$emit('handleEdit')
+      window.location.href = '/edit/' + this.title + '/time/' + this.dateTime
     }
   }
 }
