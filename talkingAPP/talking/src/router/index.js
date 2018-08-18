@@ -10,6 +10,8 @@ import passagesList from '@/components/passagesList'
 import tagPassages from '@/components/tagPassages'
 import passageEdit from '@/components/passageEdit'
 import search from '@/components/search'
+import live from '@/components/live'
+import liveContent from '@/components/liveContent'
 
 Vue.use(Router)
 
@@ -67,6 +69,18 @@ export default new Router({
       path: '/search/:field',
       name: 'search',
       component: search
+    },
+    {
+      path: '/live',
+      name: 'live',
+      component: live,
+      children: [
+        {
+          path: 'liveContent/:title',
+          name: 'liveContent',
+          component: liveContent
+        }
+      ]
     }
   ]
 })

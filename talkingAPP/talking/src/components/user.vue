@@ -45,8 +45,6 @@ export default {
     }
     this.axios.get('/').then(function (response) {
       self.authority = response.data
-      console.log(response.data)
-      console.log('authority: ' + self.authority)
     })
     let self = this
     this.axios.post('/user', data).then(function (response) {

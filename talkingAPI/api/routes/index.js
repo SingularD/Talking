@@ -210,7 +210,8 @@ router.post('/getPassage',function (req,res) {
         author: '',
         tag1: '',
         tag2: '',
-        tag3: ''
+        tag3: '',
+
     }
     const sql1 = 'update passage set pv = pv + 1 where `submit_time` = ?'
     let sql1Params = data.time;
@@ -297,7 +298,7 @@ router.get('/getHottestPassages', function (req,res) {
 //获取所有文章
 router.get('/passagesList', function (req,res) {
     let data = {}
-    const sql = 'select * from passage'
+    const sql = 'select * from passage order by submit_time desc'
     mysql.query(sql, function (err,result) {
         if (err) {
             console.log(err);
@@ -360,8 +361,72 @@ router.post('/search', function (req,res) {
     let data = {
         field: req.body.field
     }
+    const sql = 'select * from passage where `passage_title` like ? or ' +
+        'tag1 like ? or tag2 like ? or tag3 like ?'
+    let sqlParams = ['%' + data.field + '%', '%' + data.field + '%',
+        '%' + data.field + '%', '%' + data.field + '%'];
+    mysql.query(sql, sqlParams, function (err,result) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.send(result)
+    })
+})
+//获得评论
 
+router.post('/getComments', function (req, res) {
+    let data = {
+        time: req.body.time,
+    }
+    const sql = 'select * from comments where `submit_time` = ?'
+    let sqlParams = data.time
+    mysql.query(sql, sqlParams, function (err,result) {
+        if (err) {
+            console.log(err)
+            return
+        }
+        res.send(result)
+    })
 })
 
+
+//提交评论
+router.post('/inputComment', function (req, res) {
+    let data = {
+        comments: req.body.comment,
+        commentsUser: req.body.user,
+        time: req.body.time,
+        commentTime: req.body.commentTime
+    }
+    const sql = 'insert into comments (`submit_time`, `comment_time`, comments, `comment_user`)' +
+        'values (?, ?, ?, ?)'
+    const sqlParams = [data.time, data.commentTime, data.comments, data.commentsUser]
+    mysql.query(sql, sqlParams, function (err,result) {
+        if (err) {
+            console.log(err)
+            return
+        }
+        res.send('评论成功！')
+    })
+})
+
+//删除评论
+
+router.post('/deleteComment', function (req, res) {
+    let data = {
+        deleteItem: req.body.deleteItem
+    }
+    const sql = 'delete from comments where `comment_time` = ?'
+    const sqlParams = data.deleteItem
+
+    mysql.query(sql, sqlParams, function (err) {
+        if (err) {
+            console.log(err)
+            return
+        }
+        res.send('删除成功！')
+    })
+})
 
 module.exports = router;
