@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('./../models/database')
-const crypto = require('crypto')
-const changeDate = require('./../models/changeFormDate')
+const mysql = require('./../models/database');
+const crypto = require('crypto');
+const changeDate = require('./../models/changeFormDate');
+const app = express();
+const httpServer = require('http').Server(app);
+const io = require('socket.io')(httpServer);
 //获取当前用户
 router.get('/', function (req,res) {
     let current = '';
@@ -426,6 +429,14 @@ router.post('/deleteComment', function (req, res) {
             return
         }
         res.send('删除成功！')
+    })
+})
+
+//直播
+
+io.on('connection', (socket) => {
+    socket.on('chat massage', function (data) {
+        io.emit('chat massage', 'from Node')
     })
 })
 
